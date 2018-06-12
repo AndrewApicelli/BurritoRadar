@@ -80,8 +80,10 @@ public class PlaceListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof PlaceListSelectionListener){
+        try {
             this.mCallback = (PlaceListSelectionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement PlaceListSelectionListener");
         }
     }
 
