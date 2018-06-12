@@ -98,26 +98,20 @@ public class PlaceListFragment extends Fragment {
         }
         else {
             toast("Location permissions needed to find a burrito near you");
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_FINE_LOCATION);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         if(requestCode == REQUEST_FINE_LOCATION){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                getDeviceLocation();
-            } else {
-                toast("Location permission not granted");
+                tryGetNearbyResults();
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
     }
 
     /**
@@ -125,7 +119,7 @@ public class PlaceListFragment extends Fragment {
      * retrieving location.
      */
     private void getDeviceLocation(){
-
+        toast("Loading");
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         try {
