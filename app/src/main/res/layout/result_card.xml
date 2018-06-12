@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Taqueria Diana"
+                android:text="@string/blank_place_name"
                 android:textColor="@color/colorPrimary"
                 android:textSize="24sp"
                 app:fontFamily="@font/roboto_medium" />
@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="129 2nd Ave"
+                android:text="@string/blank_place_address"
                 android:textColor="@color/colorDarkFont"
                 android:textSize="14sp"
                 app:fontFamily="@font/roboto" />
@@ -53,8 +53,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="3★"
-                android:textColor="@color/common_google_signin_btn_text_light"
+                android:text="@string/blank_place_rating"
+                android:textColor="@color/colorGreyFont"
                 android:textSize="10sp"
                 app:fontFamily="@font/roboto" />
 

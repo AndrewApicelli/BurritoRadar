@@ -5,14 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -24,6 +22,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PlaceMapFragment extends Fragment implements OnMapReadyCallback {
 
+    // the fragment initialization parameters
+    private static final String ARG_NAME = "name";
+    private static final String ARG_RATING = "rating";
+    private static final String ARG_LATITUDE = "latitude";
+    private static final String ARG_LONGITUDE = "longitude";
+
     private GoogleMap mMap;
 
     private String name;
@@ -31,23 +35,45 @@ public class PlaceMapFragment extends Fragment implements OnMapReadyCallback {
     private double latitude;
     private double longitude;
 
+    public PlaceMapFragment() {
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        name = getArguments().getString(ARG_NAME);
+        rating = getArguments().getString(ARG_RATING);
+        latitude = getArguments().getDouble(ARG_LONGITUDE);
+        longitude = getArguments().getDouble(ARG_LATITUDE);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(getArguments() != null) {
-            // Inflate the layout for this fragment
-            name = getArguments().getString("name");
-            rating = getArguments().getString("rating");
-            latitude = getArguments().getDouble("latitude");
-            longitude = getArguments().getDouble("longitude");
-        }
+        return inflater.inflate(R.layout.fragment_map_place, container, false);
+    }
 
-        return inflater.inflate(R.layout.fragment_map, container, false);
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param name
+     * @param rating
+     * @param longitude
+     * @param latitude
+     * @return A new instance of fragment PlaceMapFragment.
+     */
+    public static PlaceMapFragment newInstance(String name, String rating,
+                                               double longitude, double latitude) {
+        PlaceMapFragment fragment = new PlaceMapFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_NAME, name);
+        args.putString(ARG_RATING, rating);
+        args.putDouble(ARG_LONGITUDE, longitude);
+        args.putDouble(ARG_LATITUDE, latitude);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -80,7 +106,7 @@ public class PlaceMapFragment extends Fragment implements OnMapReadyCallback {
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.custom_map_pin)));
 
         CameraPosition camResult = CameraPosition.builder().target(latLng)
-                .zoom(16).bearing(0).tilt(45).build();
+                .zoom(16).bearing(0).build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(camResult));
     }

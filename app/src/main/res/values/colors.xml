@@ -6,4 +6,5 @@
     <color name="colorActivityBackground">#ECF0F1</color>
     <color name="colorLightFont">#FFFFFF</color>
     <color name="colorDarkFont">#000000</color>
+    <color name="colorGreyFont">#D3D3D3</color>
 </resources>

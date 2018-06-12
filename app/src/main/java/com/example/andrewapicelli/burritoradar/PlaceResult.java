@@ -1,12 +1,9 @@
 package com.example.andrewapicelli.burritoradar;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * POJO for representing a Places api search result
  */
-public class SearchResult {
+public class PlaceResult {
 
     public String name;
     public String address;
@@ -14,7 +11,7 @@ public class SearchResult {
     public double latitude;
     public double longitude;
 
-    public SearchResult(){
+    public PlaceResult(){
     }
 
     public String getName() {

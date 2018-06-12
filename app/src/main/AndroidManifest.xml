@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapActivity"
+            android:name=".MapPlaceActivity"
             android:label="nothing for now"
             android:parentActivityName=".MainActivity" />
 

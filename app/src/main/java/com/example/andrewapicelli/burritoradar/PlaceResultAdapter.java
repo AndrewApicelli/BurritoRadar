@@ -12,20 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-import kotlin.properties.ObservableProperty;
-
 /**
- * RecycleViewAdapter for representing a SearchResult in the RecycleView
+ * RecycleViewAdapter for representing a PlaceResult in the RecycleView
  */
-public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
+public class PlaceResultAdapter extends RecyclerView.Adapter<PlaceResultAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<SearchResult> results = new ArrayList<>();
-    private SearchResultClickListener clickListener;
+    private List<PlaceResult> results = new ArrayList<>();
+    private PlaceListFragment.PlaceListSelectionListener clickListener;
 
     private Observable selectedItem = new Observable();
 
-    public SearchResultAdapter(Context context, SearchResultClickListener clickListener){
+    public PlaceResultAdapter(Context context, PlaceListFragment.PlaceListSelectionListener clickListener){
         mContext = context;
         this.clickListener = clickListener;
     }
@@ -34,8 +32,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
      * Appends to the current list
      * @param newResults
      */
-    public void addAll(List<SearchResult> newResults){
-        for (SearchResult result : newResults) {
+    public void addAll(List<PlaceResult> newResults){
+        for (PlaceResult result : newResults) {
             results.add(result);
             int positon = results.indexOf(result);
             notifyItemInserted(positon);
@@ -59,7 +57,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         TextView tvAddress = holder.tvAddress;
         TextView tvRating = holder.tvRating;
 
-        SearchResult currentResult = results.get(position);
+        PlaceResult currentResult = results.get(position);
 
         tvName.setText(currentResult.getName());
         tvAddress.setText(currentResult.getAddress());
@@ -79,7 +77,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         TextView tvAddress;
         TextView tvRating;
 
-        SearchResult result;
+        PlaceResult result;
 
         public ViewHolder(View itemView){
             super(itemView);
@@ -92,17 +90,17 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
         }
 
-        public void setResult(SearchResult result) {
+        public void setResult(PlaceResult result) {
             this.result = result;
         }
 
-        public SearchResult getResult() {
+        public PlaceResult getResult() {
             return result;
         }
 
         @Override
         public void onClick(View view) {
-            clickListener.resultClicked(getResult());
+            clickListener.placeSelected(getResult());
         }
     }
 }

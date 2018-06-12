@@ -2,7 +2,6 @@ package com.example.andrewapicelli.burritoradar;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
@@ -40,15 +39,17 @@ import okhttp3.Response;
 /**
  * Fragment containing contents list of location based search into Google Places api
  */
-public class PlaceListFragment extends Fragment implements SearchResultClickListener {
+public class PlaceListFragment extends Fragment {
 
-    private final int REQUEST_FINE_LOCATION = 0;
+    private static final String TAG = "PlaceListFragment";
+
+    private static final int REQUEST_FINE_LOCATION = 0;
 
     private RecyclerView recyclerView;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private SearchResultAdapter adapter;
+    private PlaceResultAdapter adapter;
 
-    private SearchResultClickListener mCallback;
+    private PlaceListSelectionListener mCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class PlaceListFragment extends Fragment implements SearchResultClickList
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter = new SearchResultAdapter(getActivity(),this);
+        adapter = new PlaceResultAdapter(getActivity(),mCallback);
 
         recyclerView.setAdapter(adapter);
 
@@ -79,8 +80,8 @@ public class PlaceListFragment extends Fragment implements SearchResultClickList
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof SearchResultClickListener){
-            this.mCallback = (SearchResultClickListener) context;
+        if(context instanceof PlaceListSelectionListener){
+            this.mCallback = (PlaceListSelectionListener) context;
         }
     }
 
@@ -109,7 +110,7 @@ public class PlaceListFragment extends Fragment implements SearchResultClickList
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 getDeviceLocation();
             } else {
-                toast("Permission not granted");
+                toast("Location permission not granted");
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -131,17 +132,17 @@ public class PlaceListFragment extends Fragment implements SearchResultClickList
                 @Override
                 public void onComplete(@NonNull Task task) {
                     if(task.isSuccessful()){
-                        Log.d("loc", "onComplete: " + task.getResult());
+                        Log.d(TAG, "onComplete: " + task.getResult());
                         Location loc = (Location) task.getResult();
                         queryPlaces(loc);
                     } else {
-                        Log.d("loc", "onComplete: Error retrieving location...");
+                        Log.d(TAG, "onComplete: Error retrieving location...");
                         toast("Error retrieving location...");
                     }
                 }
             });
         } catch (SecurityException e) {
-            Log.e("loc", "getDeviceLocation: Security Exception: " + e.getMessage());
+            Log.e(TAG, "getDeviceLocation: Security Exception: " + e.getMessage());
             toast("Error retrieving location...");
         }
 
@@ -153,7 +154,7 @@ public class PlaceListFragment extends Fragment implements SearchResultClickList
      * @param location
      */
     private void queryPlaces(Location location){
-        String query = "burrito restaurant";
+        String query = "burrito";
         String radius = "1500";
         String type = "restaurant";
         String key = getString(R.string.google_maps_key);
@@ -165,8 +166,8 @@ public class PlaceListFragment extends Fragment implements SearchResultClickList
                 .appendQueryParameter("radius", radius)
                 .appendQueryParameter("type", type)
                 .appendQueryParameter("location", loc)
-                .appendQueryParameter("key", key).build().toString();
-        Log.i("URL", "onCreate: " + myUrl);
+                .appendQueryParameter("key", key)
+                .build().toString();
 
         OkHttpClient httpClient = new OkHttpClient();
 
@@ -178,50 +179,44 @@ public class PlaceListFragment extends Fragment implements SearchResultClickList
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                toast("Failed to connect...");
+                toast("Failed to connect");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()){
                     final String strResp = response.body().string();
-                    Log.i("RESULT FROM QUERY", "onResponse: " + strResp);
+                    Log.d(TAG, "onResponse: " + strResp);
 
                     try {
                         JSONObject jsonObject = new JSONObject(strResp);
-                        final List<SearchResult> searchResults = new SearchResultBuilder().build(jsonObject);
+                        final List<PlaceResult> placeResults = new PlaceResultBuilder().build(jsonObject);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                adapter.addAll(searchResults);
+                                adapter.addAll(placeResults);
                             }
                         });
 
                     } catch (JSONException e) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                toast("Failed to connect...");
-                            }
-                        });
+                        toast("Failed read response");
                     }
 
                 } else {
-                    toast("Failed to connect...");
+                    toast("Failed to connect");
                 }
             }
         });
     }
 
-    public void toast(String text){
-        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+    private void toast(String text){
+        Toast.makeText(getActivity(), text, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void resultClicked(SearchResult result) {
-        if(mCallback != null){
-            mCallback.resultClicked(result);
-        }
+    public interface PlaceListSelectionListener {
+
+        void placeSelected(PlaceResult result);
+
     }
 
 }

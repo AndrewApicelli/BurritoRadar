@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultBuilder {
+public class PlaceResultBuilder {
 
     /**
      * Builds results provided a JSONObject representing the root of the
@@ -17,9 +17,9 @@ public class SearchResultBuilder {
      * @param responseObject
      * @return
      */
-    public List<SearchResult> build(JSONObject responseObject){
+    public List<PlaceResult> build(JSONObject responseObject){
 
-        List<SearchResult> alSearchResult = new ArrayList<>();
+        List<PlaceResult> alPlaceResult = new ArrayList<>();
         JSONArray resultArray = null;
         try {
             resultArray = responseObject.getJSONArray("results");
@@ -29,13 +29,13 @@ public class SearchResultBuilder {
         for (int i = 0; i < resultArray.length(); i++) {
             try {
                 JSONObject resultObject = resultArray.getJSONObject(i);
-                alSearchResult.add(toResult(resultObject));
+                alPlaceResult.add(toResult(resultObject));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        return alSearchResult;
+        return alPlaceResult;
 
     }
 
@@ -45,7 +45,7 @@ public class SearchResultBuilder {
      * @param resultObject
      * @return
      */
-    private SearchResult toResult(JSONObject resultObject){
+    private PlaceResult toResult(JSONObject resultObject){
 
         String name = "";
         String address = "";
@@ -67,7 +67,7 @@ public class SearchResultBuilder {
         }
 
 
-        SearchResult result = new SearchResult();
+        PlaceResult result = new PlaceResult();
         result.setName(name);
         result.setAddress(address);
         result.setRating(rating);
